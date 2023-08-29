@@ -3,6 +3,9 @@ import React, {useCallback, useState} from 'react';
 import {FieldValues, SubmitHandler, useForm} from "react-hook-form";
 import Input from "@/app/components/inputs/Input";
 import Button from "@/app/components/Button";
+import AuthSocialButton from "@/app/(site)/components/AuthSocialButton";
+import {BsGithub, BsGoogle} from "react-icons/bs";
+
 
 type Variant = 'LOGIN' | 'REGISTER';
 const Authform = () => {
@@ -73,6 +76,7 @@ const Authform = () => {
                             label="Name"
                             register={register}
                             errors={errors}
+                            disabled={isLoading}
                         />
                     )}
 
@@ -81,12 +85,14 @@ const Authform = () => {
                         label="Email"
                         register={register}
                         errors={errors}
+                        disabled={isLoading}
                     />
                     <Input
                         id="password"
                         label="Password"
                         register={register}
                         errors={errors}
+                        disabled={isLoading}
                     />
                     <Button
                         disabled={isLoading}
@@ -115,7 +121,40 @@ const Authform = () => {
                                 </span>
                         </div>
                     </div>
+                    <div
+                        className="mt-6 flex gap-2"
+                    >
+                        <AuthSocialButton
+                            icon={BsGithub}
+                            onClick={()=>socialAction('github')}
+                        />
+                        <AuthSocialButton
+                            icon={BsGoogle}
+                            onClick={()=>socialAction('google')}
+                        />
+                    </div>
                 </div>
+
+                <div
+                    className="
+                    flex
+                    gap-2
+                    justify-center
+                    text-sm
+                    mt-6
+                    px-2
+                    text-gray-500
+                    "
+                >
+                    {variant === "LOGIN" ? "New to Messenger?":"Already have an account?" }
+                    <div
+                        onClick={toggleVariant}
+                        className="underline cursor-pointer"
+                    >
+                        {variant === "LOGIN" ? "Create an account":"Sign in" }
+                    </div>
+                </div>
+
             </div>
         </div>
     )
