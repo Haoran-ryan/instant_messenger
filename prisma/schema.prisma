@@ -11,7 +11,7 @@ datasource db {
 }
 
 model User{
-  id String @id @default(auto()) @map("_id") @db.ObjectId
+  id String @id @default(auto()) @map("_id") @db.ObjectId // standard syntax to map to _id in MongoDB
   name String? // ? means optional
   email String? @unique
   emailVerified DateTime?
@@ -21,11 +21,11 @@ model User{
   updatedAt DateTime @updatedAt
 
 //   relations
-  conversationIds String[] @db.ObjectId
-  conversations Conversation[] @relation(fields: [conversationIds], references: [id])
+  conversationIds String[] @db.ObjectId // define a field 'conversationIds' of type String[]
+  conversations Conversation[] @relation(fields: [conversationIds], references: [id]) // the field 'conversationIds' defined above serves as FK to Conversation.id (model Conversation defined below)
 
   seenMessageIds String[] @db.ObjectId
-  seenMessages Message[] @relation("Seen", fields: [seenMessageIds], references: [id])
+  seenMessages Message[] @relation("Seen", fields: [seenMessageIds], references: [id]) // User and Message may be related in multiple ways. 'Seen' is the name of this particular relation
 
   accounts Account[]
   messages Message[]
