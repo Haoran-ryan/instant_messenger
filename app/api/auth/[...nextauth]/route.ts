@@ -18,17 +18,38 @@ export const authOptions: AuthOptions = {
             clientId: process.env.GOOGLE_CLIENT_ID as string,
             clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
         }),
-        CredentialsProvider({
-            name: "Credentials",
-            credentials: {
-                email: { label: "Email", type: "text"},
-                password: { label: "Password", type: "password"}
+        CredentialsProvider({ // basic email and password login
+            name: 'credentials',
+            credentials:{
+                email: { label: "Email", type: "email"},
+                password: { label: "Password", type: "password"},
             },
-        }),
-        async authorize(credentials) {
-         if(!credentials?.email || !credentials?.password)
-             throw new Error("Missing credentials");
-        }
+            async authorize(credentials){
+                if(!credentials?.email || !credentials?.password){
+                    throw new Error('Please enter your email and password')
+                }
 
-    ]
+                const user = await prisma.user.findUnique({
+                    where: { email: credentials.email }
+                });
+                if(!user || !user?.hashedPassword){ // if email is not in DB or password is not setup (
+                    throw new Error('Email not found or password not setup')
+                }
+
+                const isCorrectPassword = await bcrypt.compare(
+                    credentials.password,
+                    user.hashedPassword);
+                if(!isCorrectPassword){
+                    throw new Error('Incorrect password');
+                }
+
+                return user; // return user object if credentials are valid
+            }
+        }),
+    ],
+    debug: process.env.NODE_ENV === 'development', // only show debug messages in development
+    session:{
+        strategy: 'jwt',
+    },
+    secret: process.env.NEXTAUTH_SECRET,
 };
